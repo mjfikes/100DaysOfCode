@@ -38,7 +38,7 @@ def process_choice(choice: str):
     elif choice.lower() == 'report':
         print_report()
         pass
-    elif choice.lower() == 'close':
+    elif choice.lower() == 'off':
         quit()
     else:
         print('Invalid drink selection')
@@ -84,7 +84,7 @@ def process_payment(choice: str):
         make_drink(choice)
         return
 
-    print("Balance: ${0.2f}".format(bal))
+    print("Balance: ${0:.2f}".format(bal))
 
     # handle dimes and check for full payment
     val_d = coin_input(input("How many dimes?"),'D')
@@ -100,7 +100,7 @@ def process_payment(choice: str):
         make_drink(choice)
         return
 
-    print("Balance: ${0.2f}".format(bal))
+    print("Balance: ${0:.2f}".format(bal))
 
     # handle nickels and check for full payment
     val_n = coin_input(input("How many nickels?"), 'N')
@@ -116,7 +116,7 @@ def process_payment(choice: str):
         make_drink(choice)
         return
 
-    print("Balance: ${0.2f}".format(bal))
+    print("Balance: ${0:.2f}".format(bal))
 
     # handle pennies and check for full payment
     val_p = coin_input(input("How many pennies?"), 'P')
@@ -150,8 +150,14 @@ def print_report():
     for k,v in resources.items():
         if k=='money':
             print('{0:<15}${1:.2f}'.format(k,v))
-        else:
-            print('{0:<15}{1:.0f}'.format(k, v))
+            next
+        if k=='water' or k=='milk':
+            print('{0:<15}{1:.0f}ml'.format(k, v))
+            next
+
+        if k =='coffee':
+            print('{0:<15}{1:.0f}g'.format(k, v))
+            next
 
 
 
