@@ -45,12 +45,14 @@ def process_choice(choice: str):
         return
 
 
+def make_drink(choice: str):
+    for i, v in MENU.get(choice.lower()).get('ingredients').items():
+        resources[i] = resources.get(i) - v
+    print("Here is your {0}, enjoy! ☕".format(choice))
+    return
 
-def make_drink(choice):
-    print(choice)
 
-
-def coin_input(n:int, bev_type:str) -> float:
+def coin_input(n: int, bev_type: str) -> float:
     if bev_type == 'Q':
         val = 0.25
     elif bev_type == 'D':
@@ -64,8 +66,11 @@ def coin_input(n:int, bev_type:str) -> float:
     total = int(n) * val
     return total
 
-def add_money(price):
+
+def add_money(price: float):
     resources['money'] = resources['money']+price
+    return
+
 
 def process_payment(choice: str):
     price = MENU.get(choice.lower()).get('cost')
@@ -74,7 +79,7 @@ def process_payment(choice: str):
     val_q = coin_input(input("How many quarters?"), 'Q')
     bal = price - val_q
     if bal == 0:
-        print("thanks for exact change!")
+        print("Thanks for exact change!")
         add_money(price)
         make_drink(choice)
         return
@@ -88,9 +93,9 @@ def process_payment(choice: str):
 
     # handle dimes and check for full payment
     val_d = coin_input(input("How many dimes?"),'D')
-    bal = bal - val_d
+    bal -= val_d
     if bal == 0:
-        print("thanks for exact change!")
+        print("Thanks for exact change!")
         add_money(price)
         make_drink(choice)
         return
@@ -104,9 +109,9 @@ def process_payment(choice: str):
 
     # handle nickels and check for full payment
     val_n = coin_input(input("How many nickels?"), 'N')
-    bal = bal - val_n
+    bal -= val_n
     if bal == 0:
-        print("thanks for exact change!")
+        print("Thanks for exact change!")
         add_money(price)
         make_drink(choice)
         return
@@ -120,9 +125,9 @@ def process_payment(choice: str):
 
     # handle pennies and check for full payment
     val_p = coin_input(input("How many pennies?"), 'P')
-    bal = bal - val_p
+    bal -= val_p
     if bal == 0:
-        print("thanks for exact change!")
+        print("Thanks for exact change!")
         add_money(price)
         make_drink(choice)
         return
@@ -139,26 +144,26 @@ def process_payment(choice: str):
 def check_ingredients(choice: str):
     for i, v in MENU.get(choice.lower()).get('ingredients').items():
         if resources.get(i) >= v:
-            resources[i] = resources.get(i) - v
             continue
         else:
             print("Insufficient quantity of {0} found for {1}. Please contact supplier.".format(i, choice))
             return()
+
     process_payment(choice)
 
+
 def print_report():
-    for k,v in resources.items():
-        if k=='money':
+    for k, v in resources.items():
+        if k == 'money':
             print('{0:<15}${1:.2f}'.format(k,v))
             next
-        if k=='water' or k=='milk':
+        if k == 'water' or k == 'milk':
             print('{0:<15}{1:.0f}ml'.format(k, v))
             next
 
-        if k =='coffee':
+        if k == 'coffee':
             print('{0:<15}{1:.0f}g'.format(k, v))
             next
-
 
 
 def menu():
@@ -169,6 +174,3 @@ def menu():
 if __name__ == "__main__":
     while True:
         menu()
-
-
-
