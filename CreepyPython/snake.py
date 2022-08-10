@@ -4,10 +4,11 @@ UP = 90
 DOWN = 270
 LEFT = 180
 RIGHT = 0
+STARTING_SEGMENTS = 2
 
 class Snake:
     def __init__(self):
-        self.segment_count = 4
+        self.segment_count = STARTING_SEGMENTS
         self.segment_list = []
         self.create_head()
         self.head = self.segment_list[0]
@@ -15,12 +16,14 @@ class Snake:
         Screen().update()
         self.current_positions = [segment.position() for segment in self.segment_list]
         self.last_positions = []
+        self.is_alive = True
 
     def create_head(self):
         python_head = Turtle()
-        python_head.shape('triangle')
+        python_head.shape('square')
         python_head.pu()
         python_head.color('green')
+
         self.segment_list.append(python_head)
 
     def create_snake(self, segments):
@@ -38,44 +41,63 @@ class Snake:
                 s.setx(current_x - MOVE_DISTANCE)
 
                 current_x -= MOVE_DISTANCE
+        self.set_tail()
+
+    def add_segment(self,score):
+        python_segment = Turtle()
+        python_segment.shape('square')
+
+        python_segment.pu()
+        python_segment.color('green')
+        self.segment_list.append(python_segment)
+        try:
+            starting_pos = self.last_positions[-1]
+        except ValueError:
+            starting_pos = self.current_positions[-1]
+        python_segment.setposition(starting_pos)
+        self.set_tail()
 
     def update_snake(self):
+        self.last_positions = self.current_positions
         for segment in self.segment_list[1:]:
             segment.setposition(self.last_positions.pop(0))
 
         self.current_positions = [segment.position() for segment in self.segment_list]  # refresh current positions
-        Screen().update()
+
+
+    def set_tail(self):
+        for i in self.segment_list[:-1]:
+            i.shape('square')
+        tail_segment = self.segment_list[-1]
+        tail_segment.shape('triangle')
+        tail_segment.tiltangle(abs(self.head.heading()-180))
+
+
+
+    def move(self):
+        #self.last_positions = [segment.position() for segment in self.segment_list]
+        self.head.fd(MOVE_DISTANCE)
+        self.update_snake()
+        self.ouroboros()
 
 
     def go_down(self):
-        self.last_positions = [segment.position() for segment in self.segment_list]
         self.head.setheading(DOWN)
-        self.head.fd(MOVE_DISTANCE)
-        self.update_snake()
-        self.ouroboros()
+        self.segment_list[-1].tiltangle(UP)
 
     def go_left(self):
-        self.last_positions = [segment.position() for segment in self.segment_list]
         self.head.setheading(LEFT)
-        self.head.fd(MOVE_DISTANCE)
-        self.update_snake()
-        self.ouroboros()
+        self.segment_list[-1].tiltangle(RIGHT)
 
     def go_up(self):
-        self.last_positions = [segment.position() for segment in self.segment_list]
         self.head.setheading(UP)
-        self.head.fd(MOVE_DISTANCE)
-        self.update_snake()
-        self.ouroboros()
+        self.segment_list[-1].tiltangle(DOWN)
 
     def go_right(self):
-        self.last_positions = [segment.position() for segment in self.segment_list]
         self.head.setheading(RIGHT)
-        self.head.fd(MOVE_DISTANCE)
-        self.update_snake()
-        self.ouroboros()
+        self.segment_list[-1].tiltangle(LEFT)
 
-    def ouroboros(self):
+    def ouroboros(self):  # check if the snake is eating itself
         head_x = round(self.head.xcor())
         head_y = round(self.head.ycor())
         for pos in self.current_positions[1:]:
@@ -83,6 +105,7 @@ class Snake:
             pos_y = round(pos[1])
 
             if (head_x == pos_x and head_y==pos_y):
-                print("CHOMP CHOMP!")
-                exit()
+                self.is_alive = False
+
+
 
