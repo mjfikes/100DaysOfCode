@@ -13,8 +13,10 @@ class Vehicle(Turtle):
         #self.shape('car.gif')
         register_shape(self.car_file)
         self.shape(self.car_file)
+        self.shapesize(.9,.9)
         self.setheading(180)
         self.goto(400, random.randrange(-200,250,60))
 
     def move(self):
-        self.forward(self.speed)
+
+        self.forward(10)
