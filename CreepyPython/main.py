@@ -28,6 +28,7 @@ screen.onkeypress(key='Right', fun=snake.go_right)
 
 while game_on:
     screen.update()
+
     time.sleep(0.08)
     snake.move()
 
@@ -40,12 +41,15 @@ while game_on:
         scoreboard.add_point()
     if abs(snake.head.ycor()) > 280 or abs(snake.head.xcor()) > 280:
         snake.is_alive = False
-
     if snake.is_alive == False:
-        game_on = False
-        screen.clear()
-        screen.bgcolor('red')
-        scoreboard.kill_screen()
+        # screen.clear()
+        # screen.bgcolor('red')
+        # scoreboard.kill_screen()
+        scoreboard.reset()
+        snake.reset()
+
+
+
 
 
 screen.exitonclick()

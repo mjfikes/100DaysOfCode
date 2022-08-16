@@ -19,7 +19,9 @@ class Snake:
         self.is_alive = True
 
     def create_head(self):
+
         python_head = Turtle()
+        python_head.goto(0,0)
         python_head.shape('square')
         python_head.pu()
         python_head.color('green')
@@ -73,7 +75,6 @@ class Snake:
         tail_segment.tiltangle(abs(self.head.heading()-180))
 
 
-
     def move(self):
         #self.last_positions = [segment.position() for segment in self.segment_list]
         self.head.fd(MOVE_DISTANCE)
@@ -106,6 +107,18 @@ class Snake:
 
             if (head_x == pos_x and head_y==pos_y):
                 self.is_alive = False
+
+    def reset(self):
+        [segment.hideturtle() for segment in self.segment_list]
+        self.segment_list.clear()
+        #self.current_positions.clear()
+        #self.last_positions.clear()
+
+        self.create_head()
+        self.head = self.segment_list[0]
+        self.create_snake(self.segment_count)
+        self.current_positions = [segment.position() for segment in self.segment_list]
+        self.is_alive = True
 
 
 
