@@ -1,6 +1,8 @@
 from tkinter import *
 from tkinter import messagebox
 import pyperclip
+import json
+
 EMAIL = 'mj.fikes@gmail.com'
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 def generate_pass():
@@ -34,15 +36,48 @@ def add_pass():
     site = entry_site.get()
     user = entry_email.get()
     pw = entry_pass.get()
+    new_data = {site:{
+            'email':user,
+            'password':pw,
+        }
+    }
     is_ok = messagebox.askyesno(title=site,message=f'These are the details entered: \nEmail: {user}\nPassword:'
                                                 f'{pw}\nIs the above information correct?')
     if is_ok:
-        with open('passwords.txt','a') as f:
-            f.write(f'{site} | {user} | {pw}\n')
-        entry_site.delete(0,END)
-        entry_email.delete(0,END)
-        entry_pass.delete(0,END)
+        try:
+            with open('passwords.json','r') as j:
+                data = json.load(j)
+                data.update(new_data)
+            with open('passwords.json','w') as j:
+                json.dump(data,j,indent=4)
+        except FileNotFoundError:
+            with open('passwords.json', 'w') as j:
+                json.dump(new_data,j,indent=4)
+
+
+        finally:
+
+            entry_site.delete(0,END)
+            entry_pass.delete(0,END)
     else: return
+# ---------------------------- SEARCH PASSWORD ------------------------------- #
+def search_site():
+    site = entry_site.get()
+    user = entry_email.get()
+    pw = entry_pass.get()
+
+    try:
+        with open('passwords.json','r') as j:
+            data = json.load(j)
+
+            if data.get(site) == None:
+                messagebox.showwarning(title='Search Results',message='No results found')
+            else:
+                messagebox.showinfo(title='Search Results',message=f'{data.get(site)}')
+
+    except FileNotFoundError:
+        messagebox.showwarning(title='Search Results',message='No saved passwords found')
+
 # ---------------------------- UI SETUP ------------------------------- #
 window = Tk()
 window.title('PassManager')
@@ -70,8 +105,10 @@ entry_email.grid(column=1,row=2,columnspan=2)
 entry_email.insert(END,EMAIL)
 entry_pass.grid(column=1,row=3,sticky='e')
 #buttons
-generate_button = Button(text='Generate Password', command=generate_pass)
+search_button = Button(text='Search', command=search_site,width=16)
+generate_button = Button(text='Generate Password', command=generate_pass,width=16)
 add_button = Button(text='Add', command=add_pass,width=30)
+search_button.grid(column=2,row=1)
 generate_button.grid(column=2,row=3,sticky='w')
 add_button.grid(column=1,row=5,columnspan=2,pady=10)
 window.mainloop()
